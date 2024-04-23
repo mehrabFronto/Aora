@@ -88,3 +88,17 @@ export async function getCurrentUser() {
     return null;
   }
 }
+
+// Get all video Posts
+export async function getAllPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videosCollectionId,
+    );
+
+    return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}
