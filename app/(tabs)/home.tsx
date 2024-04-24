@@ -7,6 +7,7 @@ import EmptyState from '../../components/EmptyState';
 import { getAllPosts } from '../../lib/appwrite';
 import useFetch from '../../hooks/useFetch';
 import VideoCard from '../../components/VideoCard';
+import { VideoType } from '../../types/VideoType';
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -25,7 +26,7 @@ const Home = () => {
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={posts}
+        data={posts as VideoType[]}
         keyExtractor={(item) => String(item.$id)}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
