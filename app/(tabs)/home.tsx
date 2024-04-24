@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants';
 import SearchInput from '../../components/SearchInput';
+import Trending from '../../components/Trending';
 import EmptyState from '../../components/EmptyState';
-import { getAllPosts } from '../../lib/appwrite';
+import { getAllPosts, getLatestPosts } from '../../lib/appwrite';
 import useFetch from '../../hooks/useFetch';
 import VideoCard from '../../components/VideoCard';
 import { VideoType } from '../../types/VideoType';
@@ -13,6 +14,8 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const { data: posts, isLoading, refetch } = useFetch(getAllPosts);
+
+  const { data: latestPosts } = useFetch(getLatestPosts);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -60,6 +63,9 @@ const Home = () => {
                 Latest Videos
               </Text>
             </View>
+
+            {/* Posts Slider */}
+            <Trending posts={(latestPosts as VideoType[]) ?? []} />
           </View>
         )}
         ListEmptyComponent={() => (
