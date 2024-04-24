@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { icons } from '../constants';
+import { AVPlaybackStatus, ResizeMode, Video } from 'expo-av';
 
 interface VideoCardProps {
   video: {
@@ -59,7 +60,18 @@ const VideoCard = ({
 
       {/* video */}
       {playing ? (
-        <Text>Playing</Text>
+        <Video
+          source={{ uri: video }}
+          className="w-full h-60 rounded-xl mt-3"
+          resizeMode={ResizeMode.COVER}
+          useNativeControls
+          shouldPlay
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              setPlaying(false);
+            }
+          }}
+        />
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}

@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import * as Animatable from 'react-native-animatable';
 import { VideoType } from '../types/VideoType';
 import { icons } from '../constants';
+import { ResizeMode, Video } from 'expo-av';
 
 interface TrendingProps {
   posts: VideoType[];
@@ -87,7 +88,18 @@ const TrendingItem = ({ activeItem, item }: TrendingItemProps) => {
       }
       duration={500}>
       {playing ? (
-        <Text>Playing</Text>
+        <Video
+          source={{ uri: item.video }}
+          className="w-52 h-72 rounded-[35px] mt-3 bg-white/10"
+          resizeMode={ResizeMode.COVER}
+          useNativeControls
+          shouldPlay
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              setPlaying(false);
+            }
+          }}
+        />
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
