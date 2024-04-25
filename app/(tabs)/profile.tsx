@@ -1,21 +1,33 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EmptyState from '../../components/EmptyState';
-import { getUserPosts } from '../../lib/appwrite';
+import { getUserPosts, signOut } from '../../lib/appwrite';
 import useFetch from '../../hooks/useFetch';
 import VideoCard from '../../components/VideoCard';
 import { VideoType } from '../../types/VideoType';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { icons } from '../../constants';
 import InfoBox from '../../components/InfoBox';
+import { router } from 'expo-router';
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
 
   const { data: posts } = useFetch(() => getUserPosts(String(user?.$id)));
 
-  const handleLogout = () => {};
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setUser(null);
+      setIsLoggedIn(false);
+
+      Alert.alert('Success', 'User Signed Out');
+      router.replace('/sign-in');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -26,15 +38,17 @@ const Profile = () => {
         ListHeaderComponent={() => (
           <View className="w-full justify-center items-center mt-6 mb-12 px-4">
             {/* Logout */}
-            <TouchableOpacity
-              onPress={handleLogout}
-              className="w-full items-end mb-10">
-              <Image
-                source={icons.logout}
-                resizeMode="contain"
-                className="w-6 h-6"
-              />
-            </TouchableOpacity>
+            <View className="w-full items-end">
+              <TouchableOpacity
+                onPress={handleLogout}
+                className="mb-4 p-3 rounded-full">
+                <Image
+                  source={icons.logout}
+                  resizeMode="contain"
+                  className="w-6 h-6"
+                />
+              </TouchableOpacity>
+            </View>
 
             {/* User avatar */}
             <View className="w-16 h-16 border border-secondary rounded-lg justify-center items-center p-0.5">
