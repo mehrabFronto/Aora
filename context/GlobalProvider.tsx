@@ -4,8 +4,8 @@ import { getCurrentUser } from '../lib/appwrite';
 type GlobalContextType = {
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
-  user: unknown;
-  setUser: (user: unknown) => void;
+  user: UserType | null;
+  setUser: (user: UserType | null) => void;
   isLoading: boolean;
 };
 
@@ -13,7 +13,7 @@ const GlobalContext = createContext({} as GlobalContextType);
 
 const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<null | unknown>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
