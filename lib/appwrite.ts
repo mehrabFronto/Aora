@@ -68,6 +68,17 @@ export async function signIn(email: string, password: string) {
   }
 }
 
+// Sign Out
+export async function signOut() {
+  try {
+    const session = await account.deleteSession('current');
+
+    return session;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 // Get Current User
 export async function getCurrentUser() {
   try {
@@ -128,6 +139,21 @@ export async function searchPosts(query: string | string[] | undefined) {
     );
 
     if (!posts) throw new Error('Something went wrong');
+
+    return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Get video posts created by user
+export async function getUserPosts(userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videosCollectionId,
+      [Query.equal('creator', userId)],
+    );
 
     return posts.documents;
   } catch (error) {
