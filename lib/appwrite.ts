@@ -117,3 +117,20 @@ export async function getLatestPosts() {
     console.log(error);
   }
 }
+
+// Get video posts that matches search query
+export async function searchPosts(query: string | string[] | undefined) {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videosCollectionId,
+      [Query.search('title', query)],
+    );
+
+    if (!posts) throw new Error('Something went wrong');
+
+    return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}

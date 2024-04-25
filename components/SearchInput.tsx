@@ -1,31 +1,51 @@
-import { View, TextInput, TouchableOpacity, Image } from 'react-native';
-import React from 'react';
+import { View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
+import React, { useState } from 'react';
 import { icons } from '../constants';
+import { router, usePathname } from 'expo-router';
 
 interface FormFieldProps {
   placeholder: string;
-  value: string;
-  handleChangeText: (e: string) => void;
+  initialQuery?: string;
 }
 
-const SearchInput = ({ placeholder, value, handleChangeText }: FormFieldProps) => {
+const SearchInput = ({ placeholder, initialQuery = '' }: FormFieldProps) => {
+  const pathname = usePathname();
+  const [query, setQuery] = useState(initialQuery);
+
+  const handleSearch = () => {
+    if (!query) {
+      return Alert.alert(
+        'Query Missing',
+        'Please input something to search results across database',
+      );
+    }
+
+    if (pathname.startsWith('/search')) {
+      router.setParams({ query });
+    } else {
+      router.push(`/search/${query}`);
+    }
+  };
+
   return (
     <View
       className="w-full h-16 flex-row items-center bg-black-100 rounded-2xl overflow-hidden
         border border-black-200 focus:border-secondary space-x-4">
       <TextInput
-        className="flex-1 text-white font-pregular text-base mt-0.5 px-4"
-        value={value}
+        className="flex-1 text-white font-pregular text-base mt-0.5 pl-4 h-full"
+        value={query}
+        onChangeText={(e) => setQuery(e)}
         placeholder={placeholder}
-        placeholderTextColor="#7b7b8b"
-        onChangeText={handleChangeText}
+        placeholderTextColor="#CDCDE0"
         cursorColor="#CDCDE0"
       />
 
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={handleSearch}
+        className="h-full items-center justify-center px-4">
         <Image
           source={icons.search}
-          className="w-5 h-5 mr-4"
+          className="w-5 h-5"
           resizeMode="contain"
         />
       </TouchableOpacity>
