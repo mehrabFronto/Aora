@@ -9,6 +9,7 @@ import { getAllPosts, getLatestPosts } from '../../lib/appwrite';
 import useFetch from '../../hooks/useFetch';
 import VideoCard from '../../components/VideoCard';
 import { VideoType } from '../../types/VideoType';
+import { useGlobalContext } from '../../context/GlobalProvider';
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -16,6 +17,8 @@ const Home = () => {
   const { data: posts, isLoading, refetch } = useFetch(getAllPosts);
 
   const { data: latestPosts } = useFetch(getLatestPosts);
+
+  const { user } = useGlobalContext();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -39,9 +42,11 @@ const Home = () => {
               {/* Welcome Text */}
               <View>
                 <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back
+                  Welcome back,
                 </Text>
-                <Text className="font-psemibold text-2xl text-white">Mehrab</Text>
+                <Text className="font-psemibold text-2xl text-white">
+                  {user?.username}
+                </Text>
               </View>
 
               {/* Logo */}
