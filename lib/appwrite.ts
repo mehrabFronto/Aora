@@ -88,3 +88,32 @@ export async function getCurrentUser() {
     return null;
   }
 }
+
+// Get all video Posts
+export async function getAllPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videosCollectionId,
+    );
+
+    return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Get latest created video posts
+export async function getLatestPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      config.databaseId,
+      config.videosCollectionId,
+      [Query.orderDesc('$createdAt'), Query.limit(7)],
+    );
+
+    return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}
