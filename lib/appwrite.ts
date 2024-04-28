@@ -5,7 +5,9 @@ import {
   Avatars,
   Databases,
   Query,
+  Storage,
 } from 'react-native-appwrite';
+import { CreateFormType, File } from '../types/CreateFormType';
 
 export const config = {
   endpoint: 'https://cloud.appwrite.io/v1',
@@ -28,6 +30,7 @@ client
 const account = new Account(client);
 const avatars = new Avatars(client);
 const databases = new Databases(client);
+const storage = new Storage(client);
 
 export async function createUser(email: string, password: string, username: string) {
   try {
@@ -156,6 +159,82 @@ export async function getUserPosts(userId: string) {
     );
 
     return posts.documents;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Get File Preview
+export async function getFilePreview(fileId: string, type: string) {
+  let fileUrl;
+
+  try {
+    if (type === 'video') {
+      fileUrl = storage.getFileView(config.storageId, fileId);
+    } else if (type === 'image') {
+      fileUrl = storage.getFilePreview(
+        config.storageId,
+        fileId,
+        2000,
+        2000,
+        'top',
+        100,
+      );
+    } else {
+      throw new Error('Invalid file type');
+    }
+
+    if (!fileUrl) throw Error;
+
+    return fileUrl;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Upload File
+export async function uploadFile(file: File, type: string) {
+  if (!file) return;
+
+  const { mimeType, ...rest } = file;
+  const asset = { type: mimeType, ...rest };
+
+  try {
+    const uploadedFile = await storage.createFile(
+      config.storageId,
+      ID.unique(),
+      asset,
+    );
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+    return fileUrl;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Create Video Post
+export async function createVideoPost(form: CreateFormType) {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(form.thumbnail as File, 'image'),
+      uploadFile(form.video as File, 'video'),
+    ]);
+
+    const newPost = await databases.createDocument(
+      config.databaseId,
+      config.videosCollectionId,
+      ID.unique(),
+      {
+        title: form.title,
+        thumbnail: thumbnailUrl,
+        video: videoUrl,
+        prompt: form.prompt,
+        creator: form.userId,
+      },
+    );
+
+    return newPost;
   } catch (error) {
     console.log(error);
   }
