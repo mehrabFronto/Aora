@@ -109,6 +109,7 @@ export async function getAllPosts() {
     const posts = await databases.listDocuments(
       config.databaseId,
       config.videosCollectionId,
+      [Query.orderDesc('$createdAt')],
     );
 
     return posts.documents;
@@ -155,7 +156,7 @@ export async function getUserPosts(userId: string) {
     const posts = await databases.listDocuments(
       config.databaseId,
       config.videosCollectionId,
-      [Query.equal('creator', userId)],
+      [Query.equal('creator', userId), Query.orderDesc('$createdAt')],
     );
 
     return posts.documents;
