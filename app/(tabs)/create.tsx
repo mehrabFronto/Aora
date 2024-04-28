@@ -99,8 +99,8 @@ const Create = () => {
         {/* Prompt */}
         <FormField
           title="AI Prompt"
-          value={form.title}
-          handleChangeText={(e) => setForm({ ...form, title: e })}
+          value={form.prompt}
+          handleChangeText={(e) => setForm({ ...form, prompt: e })}
           placeholder="Video prompt"
           otherStyles="mt-8"
         />
